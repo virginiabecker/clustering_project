@@ -8,7 +8,7 @@ from src.data_loader import load_and_merge_data
 from src.exploratory_analysis import show_descriptive_stats, show_value_counts
 from src.preprocessing import preprocess_data, StandardScaler
 from src.clustering import run_kmeans_clustering, run_dbscan_clustering, run_hdbscan_clustering
-from src.visualization import visualize_clusters_pca, visualize_cluster_features_kmeans, visualize_cluster_features_dbscan, visualize_cluster_features_hdbscan
+from src.visualization import visualize_clusters_pca, visualize_cluster_features_kmeans, visualize_cluster_features_dbscan, visualize_cluster_features_hdbscan, plot_cv_std_table_from_df
 from src.model_evaluation import plot_elbow_method, print_evaluation_metrics, evaluate_dbscan_parameters, evaluate_hdbscan_parameters, plot_k_nearest_neighbors_eps
 
 
@@ -67,7 +67,10 @@ if __name__ == '__main__':
         )
         print("Dataset criado e salvo.")
 
-    df_processed = preprocess_data(customers_df.copy())
+    df_processed, cv_vol_products_per_seller, cv_ticket_per_seller = preprocess_data(customers_df.copy())
+    plot_cv_std_table_from_df(cv_vol_products_per_seller, title='CV e DP do Volume por Produto (por Seller)')
+    plot_cv_std_table_from_df(cv_ticket_per_seller, title='CV e DP do Ticket Médio (por Seller)')
+
     print("----------------Dados pré-processados e prontos para a clusterização.----------------")
 
     print("\nColunas do dataframe:")

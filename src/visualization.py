@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.graph_objects as go
 from sklearn.decomposition import PCA
 import seaborn as sns
 
@@ -52,3 +53,19 @@ def visualize_cluster_features_hdbscan(df, cluster_column, features, title_prefi
         plt.title(f'{title_prefix} - Distribuição de {feature} por Cluster')
         plt.savefig(f'reports/clusters/cluster_visualization_per_feature_{feature}_hdbscan.png')
         plt.show()
+
+def plot_cv_std_table_from_df(df, id_column='seller_id_numeric', title="CV e Desvio Padrão por Seller"):
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=["Feature", "Coeficiente de Variação"],
+                    fill_color='paleturquoise',
+                    align='left'),
+        cells=dict(values=[
+            df[id_column].astype(str),
+            df['std'].round(4),
+            df['cv'].round(4)
+        ],
+        fill_color='lavender',
+        align='left'))
+    ])
+    fig.update_layout(title_text=title, title_x=0.5)
+    fig.show()

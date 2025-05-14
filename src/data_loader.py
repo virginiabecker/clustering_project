@@ -10,9 +10,17 @@ def load_and_merge_data(raw_data_path='data/raw', output_path='data/processed/cu
     products = pd.read_csv(os.path.join(raw_data_path, 'olist_products_dataset.csv'))
     sellers = pd.read_csv(os.path.join(raw_data_path, 'olist_sellers_dataset.csv'))
     reviews = pd.read_csv(os.path.join(raw_data_path, 'olist_order_reviews_dataset.csv'))
-    
-    #print("Colunas de 'orders':", orders.columns)
-    #print("Colunas de 'customers':", customers.columns)
+    geolocation = pd.read_csv(os.path.join(raw_data_path, 'olist_geolocation_dataset.csv'))
+    customers = customers.rename(columns={'customer_zip_code_prefix': 'geolocation_zip_code_prefix'})
+    sellers = sellers.rename(columns={'seller_zip_code_prefix': 'geolocation_zip_code_prefix'})
+
+    geo = geolocation.groupby('geolocation_zip_code_prefix')[['geolocation_lat', 'geolocation_lng']].mean().reset_index()
+
+    customers = customers.merge(geo, on='geolocation_zip_code_prefix', how='left')
+    sellers = sellers.merge(geo, on='geolocation_zip_code_prefix', how='left')
+
+    customers = customers.rename(columns={'geolocation_lat': 'lat_customer', 'geolocation_lng': 'lng_customer'})
+    sellers = sellers.rename(columns={'geolocation_lat': 'lat_seller', 'geolocation_lng': 'lng_seller'})
 
     print("Fazendo merge...")
     orders['order_id'] = orders['order_id'].astype(str)
@@ -23,6 +31,7 @@ def load_and_merge_data(raw_data_path='data/raw', output_path='data/processed/cu
                .merge(products, on='product_id', how='left') \
                .merge(sellers, on='seller_id', how='left') \
                .merge(reviews, on='order_id', how='left') \
+               .merge(geolocation, on='geolocation_zip_code_prefix', how='left')
 
             
     print(f"Salvando dataset final em: {output_path}")

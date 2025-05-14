@@ -162,6 +162,8 @@ python main.py
 * numpy
 * scikit-learn
 * matplotlib
+* plotly
+* geopy
 * seaborn
 * hdbscan
 
