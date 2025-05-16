@@ -46,7 +46,7 @@ HDBSCAN - Para 1614 clusters:
 ### Análise com KMeans:
 A partir do método do cotovelo, identificou-se 2 como o melhor número de clusters para se analisar. 
 
-![Melhor n_clusters de acordo com o método do cotovelo](elbow_method.png)
+![Melhor n_clusters de acordo com o método do cotovelo](reports/clusters/elbow_method.png)
 
 A partir desta busca por diferentes correlações entre days_to_delivery e distance_km foram obtidos 0,3962 para o cluster 0 e 0.4047 para o cluster 1.
 Os clusters apresentaram correlações relevantes entre as features, porém, ao aplicar o silhouette score e o índice de davis-bouldin evidenciou-se baixa coesão dos valores, especialmente no quesito separabilidade (com enfoque para o valor do índice de davis-bouldin: > 1) com o que os clusters apresentaram. Daí, partimos para a próxima análise, utilizando o parâmetro DBSCAN.
@@ -54,14 +54,14 @@ Os clusters apresentaram correlações relevantes entre as features, porém, ao 
 ### Análise com DBSCAN:
  O DBSCAN apresentou-se como um bom caminho para a nossa análise, revelando clusters robustos, com boa densidade e pouco ruído. 
 
- ![Melhor n_clusters de acordo com o método do cotovelo](knn_eps_estimation.png)
+ ![Melhor n_clusters de acordo com o método do cotovelo](reports/clusters/knn_eps_estimation.png)
 
  Apesar da sobreposição visual entre pontos nos gráficos, o DBSCAN na visualização com PCA em 2d reforçou essa estrutura, validando a segmentação. Contudo, a análise das distribuições revelou a presença significativa de outliers no Cluster 2 (cluster com maior número de pontos). Esse aspecto é relevante e deve ser considerado na interpretação dos resultados.
 De maneira geral, os prazos de entrega (days_to_delivery) apresentaram medianas consistentes entre os clusters, com poucas variações. 
  Já a distância percorrida mostrou variações mais expressivas, sendo um diferencial importante entre os perfis de cada grupo.
 
- ![Distribuição das distâncias por região](cluster_visualization_per_feature_distance_km_dbscan.png)
- ![Distribuição dos dias para entrega do pedido](cluster_visualization_per_feature_days_to_delivery_dbscan.png)
+ ![Distribuição das distâncias por região](reports/clusters/cluster_visualization_per_feature_distance_km_dbscan.png)
+ ![Distribuição dos dias para entrega do pedido](reports/clusters/cluster_visualization_per_feature_days_to_delivery_dbscan.png)
 
 #### Clusters com maior proximidade
 * Cluster 20: concentrou clientes localizados em áreas significativamente mais próximas.
