@@ -28,7 +28,7 @@ Também foram aplicadas técnicas de redução de dimensionalidade (PCA) para vi
 
 ## Análise dos Resultados da Clusterização
 
-### Métricas de avaliação encontradas para cada algoritmo de clusterização
+**Métricas de avaliação encontradas para cada algoritmo de clusterização**
 
 KMeans - Para 2 clusters:
 * Silhouette score: 0.4462
