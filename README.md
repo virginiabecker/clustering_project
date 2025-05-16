@@ -1,5 +1,6 @@
-# Segmentação por Cluster: Uma Análise de Valor e Desempenho de Entrega com DBSCAN
-Este projeto explora a aplicação de técnicas de clusterização para segmentar clientes de uma plataforma e-commerce. Tem-se como objetivo principal identificar grupos com perfis semelhantes em relação ao valor das compras realizadas (preço, valor do frete e proporção do frete) e ao desempenho da entrega dos pedidos (score de entrega). Por meio da análise comparativa de diferentes algoritmos de clusterização (KMeans, DBSCAN e HDBSCAN), este estudo demonstra a eficácia do DBSCAN na identificação de segmentos coesos e bem definidos. 
+# Clusterização de Clientes com DBSCAN: Explorando Volume, Pagamento e Proximidade
+
+Este projeto explora a aplicação de técnicas de clusterização para segmentar clientes de uma plataforma de e-commerce. O objetivo principal é identificar grupos com perfis semelhantes quanto ao valor total pago, à quantidade de parcelas e ao número de itens comprados. Através da análise comparativa de diferentes algoritmos de clusterização (KMeans, DBSCAN e HDBSCAN), o estudo demonstra a superioridade do DBSCAN na identificação de segmentos mais coesos e bem definidos. 
 
 ## Principais etapas
 
@@ -11,16 +12,6 @@ Para as variáveis categóricas, foi realizada a contagem da frequência de cada
 Diversas colunas consideradas não relevantes para a análise foram removidas do dataset para diminuir a dimensionalidade e o ruído. Identificadores, informações textuais, datas específicas e detalhes com especificidades de produtos.
 As colunas `order_approved_at` e `order_delivered_customer_date` foram convertidas para o tipo datetime, de modo que permitisse cálculos temporais.
 Criação da feature numérica `days_to_dalivery` representando tempo de entrega em dias (a partir das features `order_approved_at` e `order_delivered_customer_date` - posteriormente removidas).
-Conversão da feature `seller_id` para `seller_id_numeric` com a técnica factorize, com a coluna original removida.
-Criação da feature `avg_review_score_per_seller` para avaliar a reputação do vendedor, salva em uma nova planilha para referência futura.
-A coluna `review_score` foi renomeada para `review_score_individual` para maior clareza.
-Criação da feature `freight_ratio`, que representa a proporção entre o valor do frete e o preço pago pelo item, ou seja, uma medida relativa do custo de envio. 
-Criação da feature `delivery_was_fast` (binária), que indica se a entrega ocorreu em menos de 5 dias.
-Criação da feature `review_score_normalized`, que representa a nota individual normalizada pela média da nota do vendedor.
-Features binárias foram criadas para indicar se o cliente e o vendedor estão no mesmo estado (loyal_customer_state), se o produto pertence a uma das 5 categorias mais vendidas (`top_product`) e se o produto pertence a uma categoria com baixa frequência de vendas('rare_category').
-Foram criadas features indicando o volume de vendas por vendedor (`sales_vol_by_seller`) e o preço médio dos itens vendidos por vendedor (`avg_ticket_per_seller`).
-Criação de `score_delivery`, que indica o desempenho da entrega, por meio da soma de dias para entrega e proporção do frete.
-Colunas categóricas restantes (`product_category_name`, `customer_state`, `seller_state`) foram convertidas para representações numéricas com o label encoding.
 O NaNs (valores ausentes) foram preenchidos com 0.
 Por fim, as variáveis numéricas foram escalonadas por meio do StandardScaler, que ajuda a padronizar a escala das features.
 
@@ -32,41 +23,69 @@ São eles:
 **HDBSCAN:** a função `run_hdbscan_clustering` foi utilizada. Os parâmetros `min_cluster_size` e `min_samples` foram definidos com base na avaliação de parâmetros em uma amostra do dataset (`min_cluster_size=10`, `min_samples=None`).
 Cada algoritmo foi aplicado ao dataset pré-processado para identificar grupos de clientes com padrões semelhantes nas features de valor e desempenho de entrega.
 A qualidade dos clusters gerados por cada algoritmo foi avaliada utilizando métricas como o silhouette-score e o índice de davis-bouldin. Seus resultados foram comparados para determinar o algoritmo mais adequado para a segmentação dos dados.
-Também foram aplicadas técnicas de redução de dimensionalidade (PCA) para visualização dos clusters em 2D e 3D, auxiliando na interpretação dos resultados. As características foram analisadas através da visualização de distribuição das features em cada grupo.
+Também foram aplicadas técnicas de redução de dimensionalidade (PCA) para visualização dos clusters em 2D, auxiliando na interpretação dos resultados. As características foram analisadas através da visualização de distribuição das features em cada grupo.
 
 
 ## Análise dos Resultados da Clusterização
 
-###Métricas de avaliação encontradas para cada algoritmo de clusterização
+### Métricas de avaliação encontradas para cada algoritmo de clusterização
 
-KMeans - Para 8 clusters:
-* Silhouette-score: 0.1293
-* Índice de davies-bouldin: 1.7919
+KMeans - Para 2 clusters:
+* Silhouette score: 0.4462
+* Índice de davies-bouldin: 1.2066
 
-DBSCAN (amostra, excluindo ruído) - Para 2 clusters:
-* Silhouette-score: 0.6146
-* Índice de davies-bouldin: 0.5295
+DBSCAN - Para 21 clusters:
+* Silhouette score: 0.4994
+* Índice de davies-bouldin: 0.7478
 
-HDBSCAN (amostra, excluindo ruído) - Para 13 clusters:
-* Silhouette-score: 0.1138
-* Índice de davies-bouldin: 1.4026
+HDBSCAN - Para 1614 clusters:
+* Silhouette score: 0.5783
+* Índice de davies-bouldin: 0.5090
+
 
 ### Análise com KMeans:
-A partir do método do cotovelo, identificou-se 8 como o melhor número de clusters para se analisar. A partir desta busca por diferentes correlações entre pares, identificaram-se alguns pontos fortes (entre avg_ticket_per_seller e price de 0.872619 e entre score_delivery e days_to_delivery de 0.999885).
-Os clusters apresentaram correlações relevantes entre as features, porém, ao aplicar o silhouette score evidenciou-se baixa coesão dos valores com o que os clusters apresentaram. Daí, partimos para a próxima análise, utilizando o parâmetro DBSCAN.
+A partir do método do cotovelo, identificou-se 2 como o melhor número de clusters para se analisar. 
+
+![Melhor n_clusters de acordo com o método do cotovelo](elbow_method.png)
+
+A partir desta busca por diferentes correlações entre days_to_delivery e distance_km foram obtidos 0,3962 para o cluster 0 e 0.4047 para o cluster 1.
+Os clusters apresentaram correlações relevantes entre as features, porém, ao aplicar o silhouette score e o índice de davis-bouldin evidenciou-se baixa coesão dos valores, especialmente no quesito separabilidade (com enfoque para o valor do índice de davis-bouldin: > 1) com o que os clusters apresentaram. Daí, partimos para a próxima análise, utilizando o parâmetro DBSCAN.
 
 ### Análise com DBSCAN:
-Clusters robustos, com pouquíssimo ruído e boa densidade, apresentou-se como um ótimo caminho para a nossa análise, podendo verificar estas características com o uso de PCA em 2d e 3d, que fortalece as evidências. No entanto, ao analisarmos os níveis de distribuição das features, notou-se muitos outliers no Cluster 0, e isso não pode ser ignorado no estudo. A partir daí, podemos tirar algumas conclusões sobre os dados analisados:
-•	Cluster 0: apresentou valores atípicos (outliers) para preços, valores de frete e score de entrega. No entanto, o padrão apresentado por este segmento é o de preços mais baixos, valores menores de frete e baixos scores de entrega. Além disso, há outliers que evidenciam frete caro em relação ao preço.
-•	Cluster 1: evidenciou valores preços mais altos, valores maiores de frete e maiores scores de entrega. 
-•	Cluster -1 (ruído): Pouca representação de ruído, mostrou-se nas 4 features, porém captando baixos valores e sem grandes variações.
+ O DBSCAN apresentou-se como um bom caminho para a nossa análise, revelando clusters robustos, com boa densidade e pouco ruído. 
+
+ ![Melhor n_clusters de acordo com o método do cotovelo](knn_eps_estimation.png)
+
+ Apesar da sobreposição visual entre pontos nos gráficos, o DBSCAN na visualização com PCA em 2d reforçou essa estrutura, validando a segmentação. Contudo, a análise das distribuições revelou a presença significativa de outliers no Cluster 2 (cluster com maior número de pontos). Esse aspecto é relevante e deve ser considerado na interpretação dos resultados.
+De maneira geral, os prazos de entrega (days_to_delivery) apresentaram medianas consistentes entre os clusters, com poucas variações. 
+ Já a distância percorrida mostrou variações mais expressivas, sendo um diferencial importante entre os perfis de cada grupo.
+
+ ![Distribuição das distâncias por região](cluster_visualization_per_feature_distance_km_dbscan.png)
+ ![Distribuição dos dias para entrega do pedido](cluster_visualization_per_feature_days_to_delivery_dbscan.png)
+
+#### Clusters com maior proximidade
+* Cluster 20: concentrou clientes localizados em áreas significativamente mais próximas.
+* Clusters 9, 13 e 18: também mostraram distâncias reduzidas, com prazos medianos de entrega entre os menores observados.
+* Estes grupos não apresentaram outliers relevantes nem em prazo, nem em distância.
+
+#### Clusters estáveis em distância e prazo
+* Clusters 0 a 6: apresentaram comportamentos muito semelhantes em termos de distância, apenas com algumas variações discretas entre si.
+* Cluster 2: muitos outliers em distância e prazo de entrega, indicando maior variabilidade num geral.
+* Clusters 3, 4 e 6: também com outliers, mas em menor intensidade.
+#### Clusters mais diversos:
+* Clusters 7, 14, 18, 19 e 20: não apresentaram outliers de distância, sugerindo distribuição mais compacta.
+* Cluster 11: embora discreto quanto à distância, apresentou o maior prazo de entrega registrado, evidenciado por um outlier acima de 17.5 dias.
+
+#### Considerações
+Com base nas observações levantadas, o cluster 2 merece atenção especial, dada sua representatividade em número de pontos e por sua alta variabilidade nos dois eixos: o que pode indicar desafios logísticos ou abrangência geográfica mais ampla.
+Já os clusters com menor distância e prazos consistentes podem representar regiões urbanas bem atendidas ou clientes localizados próximos aos centros de distribuição.
 
 ### Análise com HDBSCAN:
 Tanto em parâmetros de avaliação quanto nas análises gráficas, os dados mostram que para esta análise o HDBSCAN mostrou um desempenho inferior em comparação com o DBSCAN. 
-O HDBSCAN mostrou um número significativamente maior de clusters (13), o que corrobora para um nível de silhouette score muito menor (menor coesão) e maior índice de davis-bouldin (maior similaridade entre os clusters).
+O HDBSCAN obteve um número significativamente maior de clusters (1614), tornando-o um algoritmo inviável para esta análise, apesar de apresentar melhores valores de silhouette score e índice de davis-bouldin.
 
 ### DBSCAN como métrica principal
-O silhouette score de 0.1138 trazem uma coesão fraca entre os clusters e indica possível sobreposição entre eles (próximo de 0), contrastando fortemente com o silhouette score apresentado pelo DBSCAN de 0.6146, com uma estrutura de clusters bem mais definida e robusta. Já o índice de davies-bouldin reforça ainda mais o que obtivemos com o silhouette score, dado que é uma métrica que se deseja atingir valores menores: HDBSCAN obteve índice de davies-bouldin de 1.4026, enquanto DBSCAN foi de 0.5295, demonstrando maior coesão interna frente ao HDBSCAN. 
+O índice de davies-bouldin reforça ainda mais o que obtivemos com o silhouette score do DBSCAN, dado que é uma métrica que se deseja atingir valores menores. Apesar de o HDBSCAN ter apresentado melhores níveis de ambos, pelo número de clusters avaliado não foi possível aplicá-lo neste projeto. Como o HDBSCAN capta as densidades, e o dataset que utilizamos possui muitas granulações, sua captura através do algoritmo forma muitos clusters, não sendo possível construir uma análise clara e objetiva para o que o projeto se propõe.
 Ao fim, a análise quantitativa através do silhouette score e do índice de davis-bouldin apontou consistentemente para uma qualidade de clusterização fraca por parte do KMeans e HDBSCAN em comparação com os resultados notavelmente superiores obtidos pelo DBSCAN em nossa amostra. O DBSCAN, com sua capacidade de identificar clusters de densidade variável e lidar com ruído de forma eficaz, demonstrou ser a abordagem mais adequada para segmentar os dados deste projeto. 
 
 
@@ -102,35 +121,23 @@ CLUSTER_PROJECT/
 
 
 ## Conjunto de Dados
-O dataset utilizado é o dataset público da Olist: Brazilian E-Commerce, fundamentado em 9 planilhas iniciais, sendo destas apenas 6 selecionadas para a análise: olist_customers_dataset, olist_order_items_dataset, olist_order_reviews_dataset, olist_orders_dataset, olist_products_dataset e olist_sellers_dataset.
+O dataset utilizado é o dataset público da Olist: Brazilian E-Commerce, fundamentado em 9 planilhas iniciais, sendo destas 8 selecionadas para a análise: olist_customers_dataset, olist_order_items_dataset, olist_order_reviews_dataset, olist_orders_dataset, olist_products_dataset, olist_payments_dataset, olist_geolocation_dataset e olist_sellers_dataset.
 
 Após tratamento dos dados, estas planilhas foram unidas e formaram o dataset inicial `customers_dataset`.
-Nele, estão contidas as informações sobre transações e avaliações. As principais variáveis no dataset são:
+Nele, estão contidas as informações sobre transações e avaliações. As principais variáveis no dataset (para a clusterização) são:
+
 **Variáveis originais**
-customer_id: identificador de cliente
-product_id: identificador do produto
-seller_id: identificador do vendedor
-price: preço do item
-freight_value: valor do frete
 order_approved_at: data e hora em que o pagamento foi aprovado.
 order_delivered_customer_date: data e hora em que o pedido foi entregue ao cliente.
-review_score: nota de avaliação dada pelo cliente (1 a 5)
-product_category_name: nome da categoria do produto - em português
-customer_state: Estado de cada cliente
-customer_seller: Estado de cada vendedor
-order_id: identificador de cada pedido
-order_item_id: identificador do item dentro do pedido
+geolocation_lat: latitude para referência.
+geolocation_lng: longitude para referência.
+geolocation_zip_code_prefix: prefixo para referência.
+seller_zip_code_prefix: prefixo da região do centro de distribuição.
+customer_zip_code_prefix: prefixo da região do cliente.
 
-**Variáveis derivadas das originais para análise**
-days_to_delivery: número de dias entre a data da compra e a data da entrega
-score_delivery: avaliação da entrega
-freight_ratio: razão entre valor do frete e preço do item
-review_score_normalized: versão normalizada da nota de avaliação
-review_score_individual: avaliação por item do pedido
-avg_review_score_per_seller: média da nota de avaliação por vendedor
-avg_ticket_per_seller: valor médio do ticket por vendedor
-
-
+**Variável derivada das originais para análise**
+days_to_delivery: número de dias entre a data da compra e a data da entrega.
+distance_km: distância entre o cliente e o centro de distribuição.
 
 ## Como Usar:
 
@@ -162,7 +169,6 @@ python main.py
 * numpy
 * scikit-learn
 * matplotlib
-* plotly
 * geopy
 * seaborn
 * hdbscan

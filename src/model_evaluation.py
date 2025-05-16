@@ -19,7 +19,8 @@ def plot_elbow_method(df, range_n_clusters):
         kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init='auto')
         kmeans.fit(numeric_df)
         inertias.append(kmeans.inertia_)
-        print(f"Para {n_clusters} clusters - Inércia: {kmeans.inertia_:.4f}")
+
+    print(f"Para {n_clusters} clusters - Inércia: {kmeans.inertia_:.4f}")
 
     plt.figure(figsize=(8, 6))
     plt.plot(range_n_clusters, inertias, marker='o')

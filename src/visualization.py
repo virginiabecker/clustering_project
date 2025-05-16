@@ -30,42 +30,28 @@ def visualize_clusters_pca(df, labels, n_components=2, title='Visualização de 
         plt.savefig('reports/clusters/cluster_visualization_pca_3d.png')
         plt.show()
 
-def visualize_cluster_features_kmeans(df, cluster_column, features, title_prefix=''):
+def visualize_cluster_features_kmeans(df_processed_sampled, cluster_column, features, title_prefix=''):
     for feature in features:
         plt.figure(figsize=(10, 6))
-        sns.boxplot(x=cluster_column, y=feature, data=df)
+        sns.boxplot(x=cluster_column, y=feature, data=df_processed_sampled)
         plt.title(f'{title_prefix} - Distribuição de {feature} por Cluster')
         plt.savefig(f'reports/clusters/cluster_visualization_per_feature_{feature}_kmeans.png')
         plt.show()
 
-def visualize_cluster_features_dbscan(df, cluster_column, features, title_prefix=''):
+def visualize_cluster_features_dbscan(df_sample, cluster_column, features, title_prefix=''):
     for feature in features:
         plt.figure(figsize=(10, 6))
-        sns.boxplot(x=cluster_column, y=feature, data=df)
+        sns.boxplot(x=cluster_column, y=feature, data=df_sample)
         plt.title(f'{title_prefix} - Distribuição de {feature} por Cluster')
         plt.savefig(f'reports/clusters/cluster_visualization_per_feature_{feature}_dbscan.png')
         plt.show()
 
-def visualize_cluster_features_hdbscan(df, cluster_column, features, title_prefix=''):
+def visualize_cluster_features_hdbscan(df_sample_hdbscan, cluster_column, features, title_prefix=''):
     for feature in features:
         plt.figure(figsize=(10, 6))
-        sns.boxplot(x=cluster_column, y=feature, data=df)
+        sns.boxplot(x=cluster_column, y=feature, data=df_sample_hdbscan)
         plt.title(f'{title_prefix} - Distribuição de {feature} por Cluster')
         plt.savefig(f'reports/clusters/cluster_visualization_per_feature_{feature}_hdbscan.png')
         plt.show()
 
-def plot_cv_std_table_from_df(df, id_column='seller_id_numeric', title="CV e Desvio Padrão por Seller"):
-    fig = go.Figure(data=[go.Table(
-        header=dict(values=["Feature", "Coeficiente de Variação"],
-                    fill_color='paleturquoise',
-                    align='left'),
-        cells=dict(values=[
-            df[id_column].astype(str),
-            df['std'].round(4),
-            df['cv'].round(4)
-        ],
-        fill_color='lavender',
-        align='left'))
-    ])
-    fig.update_layout(title_text=title, title_x=0.5)
-    fig.show()
+
