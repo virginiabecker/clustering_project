@@ -1,6 +1,6 @@
-# Clusterização de Clientes com DBSCAN: Explorando Volume, Pagamento e Proximidade
+# Clusterização de Clientes com DBSCAN: Explorando Prazo de entrega e Proximidade
 
-Este projeto explora a aplicação de técnicas de clusterização para segmentar clientes de uma plataforma de e-commerce. O objetivo principal é identificar grupos com perfis semelhantes quanto ao valor total pago, à quantidade de parcelas e ao número de itens comprados. Através da análise comparativa de diferentes algoritmos de clusterização (KMeans, DBSCAN e HDBSCAN), o estudo demonstra a superioridade do DBSCAN na identificação de segmentos mais coesos e bem definidos. 
+Este projeto explora a aplicação de técnicas de clusterização para segmentar clientes de uma plataforma de e-commerce. O objetivo principal é identificar grupos com perfis semelhantes quanto ao prazo de entrega dos pedidos e à localização dos clientes, para posteriores análises destes clusters. Através da análise comparativa de diferentes algoritmos de clusterização (KMeans, DBSCAN e HDBSCAN), o estudo demonstra a superioridade do DBSCAN na identificação de segmentos mais coesos e bem definidos. 
 
 ## Principais etapas
 
@@ -120,7 +120,7 @@ CLUSTER_PROJECT/
 ```
 
 
-## Conjunto de Dados
+## Conjunto de dados
 O dataset utilizado é o dataset público da Olist: Brazilian E-Commerce, fundamentado em 9 planilhas iniciais, sendo destas 8 selecionadas para a análise: olist_customers_dataset, olist_order_items_dataset, olist_order_reviews_dataset, olist_orders_dataset, olist_products_dataset, olist_payments_dataset, olist_geolocation_dataset e olist_sellers_dataset.
 
 Após tratamento dos dados, estas planilhas foram unidas e formaram o dataset inicial `customers_dataset`.
@@ -139,7 +139,7 @@ customer_zip_code_prefix: prefixo da região do cliente.
 days_to_delivery: número de dias entre a data da compra e a data da entrega.
 distance_km: distância entre o cliente e o centro de distribuição.
 
-## Como Usar:
+## Como usar
 
 ### 1. **Clonar o repositório:**
 ```bash
